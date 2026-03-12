@@ -4,7 +4,7 @@ this will save u from adjusting the images later
 # App Store Screenshots Generator
 
 A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that generates production-ready App Store screenshots for iOS apps. It scaffolds a Next.js project, designs advertisement-style screenshots, and exports them at all required Apple resolutions.
-
+#### Screenshots & App approved by Apple - https://apps.apple.com/us/app/bloom-coffee-shelf-recipe/id6759914524
 ![Example output — Bloom coffee tracking app](example.png)
 
 ## What it does
