@@ -1,13 +1,13 @@
 ---
 name: app-store-screenshots
-description: Use when building App Store screenshot pages, generating exportable marketing screenshots for iOS apps, or creating programmatic screenshot generators with Next.js. Triggers on app store, screenshots, marketing assets, html-to-image, phone mockup.
+description: Use when building App Store screenshot pages, generating exportable marketing screenshots for iOS apps or desktop web apps, or creating programmatic screenshot generators with Next.js. Triggers on app store, screenshots, marketing assets, html-to-image, phone mockup, browser window mockup.
 ---
 
 # App Store Screenshots Generator
 
 ## Overview
 
-Build a Next.js page that renders iOS App Store screenshots as **advertisements** (not UI showcases) and exports them via `html-to-image` at Apple's required resolutions. Screenshots are the single most important conversion asset on the App Store.
+Build a Next.js page that renders marketing screenshots as **advertisements** (not UI showcases) and exports them via `html-to-image` at required resolutions. Primary default remains iOS App Store, with optional desktop web app support using browser-window layouts.
 
 ## Core Principle
 
@@ -30,9 +30,10 @@ Before writing ANY code, ask the user all of these. Do not proceed until you hav
 ### Optional
 
 8. **iPad screenshots** — "Do you also have iPad screenshots? If so, we'll generate iPad App Store screenshots too (recommended for universal apps)."
-9. **Component assets** — "Do you have any UI element PNGs (cards, widgets, etc.) you want as floating decorations? If not, that's fine — we'll skip them."
-10. **Localized screenshots** — "Do you want screenshots in multiple languages? This helps your listing rank in regional App Stores even if your app is English-only. If yes: which languages? (e.g. en, de, es, pt, ja)"
-11. **Additional instructions** — "Any specific requirements, constraints, or preferences?"
+9. **Desktop screenshots** — "Do you have desktop web app screenshots (browser captures)? If yes, we can also generate desktop marketing assets."
+10. **Component assets** — "Do you have any UI element PNGs (cards, widgets, etc.) you want as floating decorations? If not, that's fine — we'll skip them."
+11. **Localized screenshots** — "Do you want screenshots in multiple languages? This helps your listing rank in regional App Stores even if your app is English-only. If yes: which languages? (e.g. en, de, es, pt, ja)"
+12. **Additional instructions** — "Any specific requirements, constraints, or preferences?"
 
 ### Derived from answers (do NOT ask — decide yourself)
 
@@ -91,7 +92,11 @@ project/
 │   │   ├── home.png
 │   │   ├── feature-1.png
 │   │   └── ...
-│   └── screenshots-ipad/       # iPad app screenshots (optional)
+│   ├── screenshots-ipad/       # iPad app screenshots (optional)
+│   │   ├── home.png
+│   │   ├── feature-1.png
+│   │   └── ...
+│   └── screenshots-desktop/    # desktop web app screenshots (optional)
 │       ├── home.png
 │       ├── feature-1.png
 │       └── ...
@@ -261,19 +266,21 @@ The pattern is:
 
 ```
 page.tsx
-├── Constants (IPHONE_W/H, IPAD_W/H, SIZES, design tokens)
+├── Constants (IPHONE_W/H, IPAD_W/H, DESKTOP_W/H, SIZES, design tokens)
 ├── Phone component (mockup PNG with screen overlay)
 ├── IPad component (CSS-only frame with screen overlay)
+├── BrowserWindow component (CSS-only browser frame + toolbar)
 ├── Caption component (label + headline, accepts canvasW for scaling)
 ├── Decorative components (blobs, glows, shapes — based on style direction)
 ├── iPhoneSlide1..N components (one per slide)
 ├── iPadSlide1..N components (same designs, adjusted for iPad proportions)
-├── IPHONE_SCREENSHOTS / IPAD_SCREENSHOTS arrays (registries)
+├── desktopSlide1..N components (same message/copy adapted to landscape)
+├── IPHONE_SCREENSHOTS / IPAD_SCREENSHOTS / DESKTOP_SCREENSHOTS arrays (registries)
 ├── ScreenshotPreview (ResizeObserver scaling + hover export)
 └── ScreenshotsPage (grid + device toggle + size dropdown + export logic)
 ```
 
-### Export Sizes (Apple Required, portrait)
+### Export Sizes (device presets)
 
 #### iPhone
 
@@ -303,11 +310,53 @@ Design iPad slides at 2064x2752 and scale down. iPad screenshots are optional bu
 
 #### Device Toggle
 
-When supporting both devices, add a toggle (iPhone / iPad) in the toolbar next to the size dropdown. The size dropdown should switch between iPhone and iPad sizes based on the selected device. Support a `?device=ipad` URL parameter for headless/automated capture workflows.
+When supporting multiple devices, add a toggle (iPhone / iPad / Desktop) in the toolbar next to the size dropdown. The size dropdown should switch between the selected device presets. Support `?device=iphone`, `?device=ipad`, and `?device=desktop` URL parameters for headless/automated capture workflows.
+
+#### Desktop Web App (Landscape)
+
+For desktop web app marketing assets, use landscape browser-window layouts:
+
+```typescript
+const DESKTOP_SIZES = [
+  { label: "Desktop HD", w: 1600, h: 900 },
+  { label: "Desktop FHD", w: 1920, h: 1080 },
+  { label: "Desktop 5:4", w: 1440, h: 1024 },
+] as const;
+```
+
+Design desktop slides at the largest common preset for web marketing (`1920x1080`) and scale to the other desktop targets during export.
+
+### Minimal Refactor Plan (non-destructive)
+
+Keep the current page architecture and export flow. Add desktop support by extending existing unions/registries instead of replacing anything:
+
+```ts
+type Device = "iphone" | "ipad" | "desktop";
+
+const SIZE_MAP = {
+  iphone: IPHONE_SIZES,
+  ipad: IPAD_SIZES,
+  desktop: DESKTOP_SIZES,
+} as const;
+
+const SCREENSHOT_MAP = {
+  iphone: IPHONE_SCREENSHOTS,
+  ipad: IPAD_SCREENSHOTS,
+  desktop: DESKTOP_SCREENSHOTS,
+} as const;
+
+const BASE_CANVAS = {
+  iphone: { w: 1320, h: 2868 },
+  ipad: { w: 2064, h: 2752 },
+  desktop: { w: 1920, h: 1080 },
+} as const;
+```
+
+Use the selected `device` to drive slide registry + size dropdown. Export logic stays exactly the same (`toPng` warmup call + final call, offscreen node, resize to target preset).
 
 ### Rendering Strategy
 
-Each screenshot is designed at full resolution (1320x2868px). Two copies exist:
+Each screenshot is designed at the active device's base resolution (iPhone: `1320x2868`, iPad: `2064x2752`, Desktop: `1920x1080`). Two copies exist:
 
 1. **Preview**: CSS `transform: scale()` via ResizeObserver to fit a grid card
 2. **Export**: Offscreen at `position: absolute; left: -9999px` at true resolution
@@ -406,6 +455,54 @@ function IPad({ src, alt, style, className = "" }: {
 - Caption font sizes should scale from `canvasW` (which is 2064 for iPad vs 1320 for iPhone)
 - Same slide designs/copy can be reused — just swap the Phone component for IPad and adjust positioning
 
+### Desktop Browser Window Component (CSS-Only)
+
+Desktop screenshots should look like polished product marketing for a web app inside a browser frame (tab strip + address bar), not a raw full-bleed capture.
+
+```tsx
+function BrowserWindow({ src, alt, style, className = "" }: {
+  src: string; alt: string; style?: React.CSSProperties; className?: string;
+}) {
+  return (
+    <div className={`relative ${className}`}
+      style={{ aspectRatio: "16/9", ...style }}>
+      <div style={{
+        width: "100%", height: "100%", borderRadius: 28,
+        background: "#111827", overflow: "hidden",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.35)",
+        border: "1px solid rgba(255,255,255,0.12)",
+      }}>
+        <div style={{
+          height: "8.5%", minHeight: 52,
+          background: "linear-gradient(180deg,#1f2937 0%,#111827 100%)",
+          borderBottom: "1px solid rgba(255,255,255,0.1)",
+          display: "flex", alignItems: "center", gap: 10, padding: "0 16px",
+        }}>
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef4444" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#f59e0b" }} />
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#22c55e" }} />
+          <div style={{
+            marginLeft: 12, borderRadius: 999, padding: "6px 12px",
+            background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.7)",
+            fontSize: 12,
+          }}>yourapp.com</div>
+        </div>
+        <div style={{ height: "91.5%", background: "#000" }}>
+          <img src={src} alt={alt}
+            style={{ display: "block", width: "100%", height: "100%", objectFit: "cover", objectPosition: "top" }}
+            draggable={false} />
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+**Desktop layout adjustments vs portrait devices:**
+- Keep headline blocks narrower (`maxWidth: "44-56%"`) so copy still reads quickly on wide canvases.
+- Browser window usually occupies `78-90%` of slide width and sits lower (`bottom: "-4%" to "6%"`) to leave room for headline.
+- Reuse the same copy arc from mobile, but rebalance composition for horizontal space.
+
 ### Typography (Resolution-Independent)
 
 All sizing relative to canvas width W:
@@ -479,6 +576,7 @@ el.style.zIndex = "";
 - 300ms delay between sequential exports.
 - Set `fontFamily` on the offscreen container.
 - **Numbered filenames**: Prefix exports with zero-padded index so they sort correctly: `01-hero-1320x2868.png`, `02-freshness-1320x2868.png`, etc. Use `String(index + 1).padStart(2, "0")`.
+- **Device-specific filenames** (recommended): include device prefix for mixed batches, e.g. `desktop-01-hero-1920x1080.png`.
 
 ## Step 7: Final QA Gate
 
