@@ -224,3 +224,141 @@ Com Claude Code, este repositório funciona muito bem como:
 3. **ponto de partida** para evoluir um gerador Next.js completo.
 
 Se quiser, o próximo passo natural é pedir ao Claude Code para scaffoldar a aplicação Next.js completa e conectar o fluxo de exportação PNG com presets desktop já definidos.
+
+---
+
+## 11) Prompts prontos (copy/paste) para o Claude fazer tudo
+
+Aqui estão prompts diretos para você colar no Claude Code.
+
+### 11.1 Instalar tudo que precisa no projeto
+
+```text
+Você está neste repositório. Faça o setup completo para eu usar captura automática e fluxo local:
+
+1) Detecte o gerenciador de pacotes disponível e instale dependências do projeto.
+2) Instale Playwright como dependência de desenvolvimento.
+3) Instale o browser Chromium do Playwright.
+4) Valide com:
+   - node -v
+   - npm -v (ou equivalente)
+   - node scripts/capture-webapp-screenshot.mjs --help
+5) Me entregue no final:
+   - comandos executados
+   - status de cada comando (ok/falhou)
+   - próximos passos objetivos
+
+Se algo falhar, faça troubleshooting e tente o melhor fallback sem parar no primeiro erro.
+```
+
+### 11.2 Capturar 1 screenshot da minha URL
+
+```text
+Execute uma captura automática com este script do repositório:
+
+URL: https://SEU-DOMINIO.com
+Viewport: 1920x1080
+Tema: dark
+Saída: public/screenshots-desktop/auto/home-dark.png
+
+Comando esperado:
+node scripts/capture-webapp-screenshot.mjs --url https://SEU-DOMINIO.com --viewport 1920x1080 --theme dark --output public/screenshots-desktop/auto/home-dark.png
+
+Depois valide se o arquivo foi criado e me mostre:
+- caminho absoluto
+- tamanho do arquivo
+- horário de criação/modificação
+```
+
+### 11.3 Capturar lote (3 presets desktop)
+
+```text
+Crie um lote de capturas da URL https://SEU-DOMINIO.com para os presets desktop do projeto,
+com tema light, salvando em public/screenshots-desktop/auto/ com nomes padronizados.
+
+Faça capturas para:
+- 1600x900
+- 1920x1080
+- 1440x1024
+
+Nomeie os arquivos assim:
+- home-light-1600x900.png
+- home-light-1920x1080.png
+- home-light-1440x1024.png
+
+No final, liste os arquivos gerados e os respectivos tamanhos.
+```
+
+### 11.4 Captura robusta para página dinâmica (lazy loading)
+
+```text
+Preciso capturar https://SEU-DOMINIO.com, mas a página é dinâmica.
+
+Faça duas tentativas:
+1) tentativa padrão
+2) tentativa com --wait-ms 4000
+
+Use viewport 1920x1080, tema light, e salve como:
+- tentativa-1.png
+- tentativa-2-wait4000.png
+
+Compare os resultados (tamanho e estabilidade visual) e recomende qual arquivo usar.
+```
+
+### 11.5 Fazer “setup + capturas + relatório final” em uma tacada
+
+```text
+Faça um fluxo completo neste repositório:
+
+1) Instalar dependências do projeto.
+2) Instalar Playwright + Chromium.
+3) Rodar captura da URL https://SEU-DOMINIO.com nos 3 presets:
+   - 1600x900
+   - 1920x1080
+   - 1440x1024
+4) Gerar arquivos em public/screenshots-desktop/auto/ com nomes:
+   - 01-home-light-1600x900.png
+   - 02-home-light-1920x1080.png
+   - 03-home-light-1440x1024.png
+5) Validar saída (arquivo existe, tamanho > 0).
+
+Entregue um relatório final em Markdown com:
+- comandos executados
+- status de cada etapa
+- arquivos gerados
+- problemas encontrados e correções aplicadas
+- próximos passos para transformar em peças promocionais.
+```
+
+### 11.6 Evoluir para app Next.js completa (gerador promocional)
+
+```text
+Evolua este repositório para uma aplicação Next.js com TypeScript e Tailwind,
+com página de geração de screenshots promocionais desktop em src/app/page.tsx.
+
+Requisitos:
+- manter escopo desktop/web
+- exportar PNG com html-to-image
+- suportar presets 1600x900, 1920x1080, 1440x1024
+- reutilizar imagens de public/screenshots-desktop/
+- não quebrar o script scripts/capture-webapp-screenshot.mjs
+
+No final:
+1) rode os checks disponíveis
+2) descreva arquitetura criada
+3) mostre como usar em 5 passos
+4) liste limitações e próximos incrementos
+```
+
+### 11.7 Prompt curto “modo operacional” (para uso diário)
+
+```text
+Atue como operador deste repositório de screenshots desktop.
+Sempre que eu passar URL + tema + viewport:
+1) execute captura com scripts/capture-webapp-screenshot.mjs
+2) salve em public/screenshots-desktop/auto/ com nome padronizado
+3) valide arquivo gerado
+4) retorne um resumo objetivo com comando, status e caminho final.
+```
+
+Dica: substitua `https://SEU-DOMINIO.com` pela URL real e ajuste `light/dark` conforme sua necessidade.
