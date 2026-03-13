@@ -1,6 +1,6 @@
 ---
 name: web-app-screenshots
-description: Use when creating desktop SaaS/web app promotional screenshot generators with Next.js, TypeScript, Tailwind, and html-to-image.
+description: Use when creating desktop SaaS/web app promotional screenshot generators with Next.js, TypeScript, Tailwind, html-to-image, and optional Playwright auto-capture.
 ---
 
 # Desktop Web App Screenshots Skill
@@ -28,11 +28,12 @@ Build a Next.js page that generates promotional desktop screenshots as ads (not 
 6. Number of slides
 7. Style direction
 
-### Optional
+### Optional (auto-capture)
 
-8. Decorative/floating PNG components
-9. Localization requirements
-10. Constraints and mandatory copy
+8. URL for automatic capture
+9. Target viewport (`1600x900`, `1920x1080`, `1440x1024` or custom)
+10. Theme preference (`light`/`dark`) when applicable
+11. Constraints and mandatory copy
 
 ## 2) Project setup
 
@@ -43,6 +44,10 @@ Keep the stack unchanged:
 - Tailwind
 - html-to-image
 - single generator page in `src/app/page.tsx`
+
+Optional dependency for auto-capture:
+
+- Playwright (`npm i -D playwright` + `npx playwright install chromium`)
 
 Package manager priority: `bun > pnpm > yarn > npm`.
 
@@ -80,7 +85,26 @@ type ExportPreset = {
 };
 ```
 
-## 5) PNG export pipeline
+## 5) Optional automatic capture flow (Playwright)
+
+Implement as a non-breaking optional flow:
+
+1. user provides URL + viewport + theme
+2. script captures PNG to `public/screenshots-desktop/auto/`
+3. generator reuses captured image exactly like manually provided screenshots
+4. if unavailable/fails, continue with manual local/uploaded screenshot flow
+
+Reference command:
+
+```bash
+node scripts/capture-webapp-screenshot.mjs \
+  --url https://example.com \
+  --viewport 1920x1080 \
+  --theme dark \
+  --output public/screenshots-desktop/auto/home-dark.png
+```
+
+## 6) PNG export pipeline
 
 Preserve current export logic with `html-to-image`:
 
@@ -90,7 +114,7 @@ Preserve current export logic with `html-to-image`:
 - scale/resize by preset when needed
 - deterministic filenames (e.g. `01-hero-1920x1080.png`)
 
-## 6) Naming conventions
+## 7) Naming conventions
 
 Use only desktop/web terminology in labels, texts, helpers, and docs:
 
@@ -100,7 +124,7 @@ Use only desktop/web terminology in labels, texts, helpers, and docs:
 
 Avoid mobile/App Store/iPhone naming.
 
-## 7) QA
+## 8) QA
 
 Before delivery:
 
@@ -108,4 +132,11 @@ Before delivery:
 - varied composition between adjacent slides
 - all required desktop presets export correctly
 - no clipped UI/text in final PNGs
+- optional Playwright capture works when dependency is installed
 - project runs locally (`npm run dev` or equivalent)
+
+## Known limitations
+
+- authenticated pages may require custom login automation
+- dark/light capture depends on app behavior with `prefers-color-scheme`
+- dynamic pages may require extra wait time before screenshot

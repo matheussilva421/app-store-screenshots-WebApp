@@ -11,6 +11,7 @@ Este projeto é **exclusivamente desktop web apps**.
 - ✅ Foco: dashboards, tabelas, analytics, layouts com sidebar/topbar/cards
 - ✅ Mockup principal: janela de navegador desktop
 - ✅ Exportação PNG em presets desktop
+- ✅ Captura automática opcional de screenshots via Playwright
 - ❌ Sem fluxo/App Store/iPhone/mobile
 
 ## O que ele faz
@@ -19,6 +20,7 @@ Este projeto é **exclusivamente desktop web apps**.
 - Gera slides promocionais (cada slide vende uma ideia)
 - Usa componentes reutilizáveis para layouts desktop
 - Exporta screenshots em PNG mantendo o pipeline com `html-to-image`
+- Permite captura automática opcional de telas de uma URL para reutilização no layout promocional
 
 ## Estrutura esperada
 
@@ -31,7 +33,9 @@ project/
 │       ├── dashboard.png
 │       ├── table.png
 │       ├── analytics.png
-│       └── ...
+│       └── auto/              # capturas automáticas opcionais
+├── scripts/
+│   └── capture-webapp-screenshot.mjs
 ├── src/app/
 │   ├── layout.tsx
 │   └── page.tsx
@@ -45,6 +49,40 @@ project/
 | Desktop HD | 1600 x 900 |
 | Desktop FHD | 1920 x 1080 |
 | Desktop 5:4 | 1440 x 1024 |
+
+## Captura automática opcional (Playwright)
+
+> O fluxo manual (imagens locais/enviadas) continua funcionando normalmente.
+
+### 1) Instalar dependências no projeto alvo
+
+```bash
+npm i -D playwright
+npx playwright install chromium
+```
+
+### 2) Executar a captura
+
+```bash
+node scripts/capture-webapp-screenshot.mjs \
+  --url https://seu-app.com \
+  --viewport 1920x1080 \
+  --theme dark \
+  --output public/screenshots-desktop/auto/home-dark.png
+```
+
+### 3) Reutilizar na composição visual existente
+
+Use o PNG gerado em `public/screenshots-desktop/...` como qualquer screenshot manual no layout promocional atual.
+
+### Opções disponíveis
+
+- `--url` (obrigatório)
+- `--viewport` (`WxH`, ex: `1600x900`, `1920x1080`, `1440x1024`)
+- `--theme` (`light` ou `dark`)
+- `--output` (arquivo de saída PNG)
+- `--wait-ms` (delay extra após carregamento)
+- `--full-page` (captura página inteira)
 
 ## Execução local
 
@@ -61,7 +99,15 @@ npm run dev
 - TypeScript
 - Tailwind CSS
 - html-to-image
+- Playwright (opcional para captura automática)
 - React
+
+## Limitações conhecidas
+
+- Login, MFA e fluxos protegidos podem exigir adaptação do script.
+- Tema claro/escuro depende da aplicação respeitar `prefers-color-scheme`.
+- Conteúdo dinâmico/lazy pode exigir ajuste em `--wait-ms`.
+- Alguns sites bloqueiam automação ou precisam de headers/cookies específicos.
 
 ## Licença
 
