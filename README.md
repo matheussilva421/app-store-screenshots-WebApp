@@ -12,7 +12,7 @@ Este projeto é **exclusivamente desktop web apps**.
 - ✅ Mockup principal: janela de navegador desktop
 - ✅ Exportação PNG em presets desktop
 - ✅ Captura automática opcional de screenshots via Playwright
-- ❌ Sem fluxo/App Store/iPhone/mobile
+- ❌ Sem suporte a layouts mobile
 
 ## O que ele faz
 

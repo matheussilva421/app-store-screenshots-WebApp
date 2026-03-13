@@ -40,7 +40,12 @@ function parseArgs(argv) {
       const [w, h] = next.toLowerCase().split("x");
       const width = Number(w);
       const height = Number(h);
-      if (!Number.isFinite(width) || !Number.isFinite(height)) {
+      if (
+        !Number.isFinite(width) ||
+        !Number.isFinite(height) ||
+        width <= 0 ||
+        height <= 0
+      ) {
         throw new Error("Formato de viewport inválido. Use, por exemplo: 1920x1080");
       }
       result.width = width;
@@ -50,10 +55,11 @@ function parseArgs(argv) {
     }
 
     if (token === "--theme" && next) {
-      if (!["light", "dark"].includes(next)) {
+      const normalizedTheme = next.toLowerCase();
+      if (!["light", "dark"].includes(normalizedTheme)) {
         throw new Error("Tema inválido. Use --theme light ou --theme dark");
       }
-      result.theme = next;
+      result.theme = normalizedTheme;
       i += 1;
       continue;
     }
@@ -82,6 +88,10 @@ function parseArgs(argv) {
     if (token === "--help" || token === "-h") {
       printHelp();
       process.exit(0);
+    }
+
+    if (token.startsWith("--")) {
+      throw new Error(`Parâmetro desconhecido: ${token}`);
     }
   }
 

@@ -10,7 +10,7 @@ description: Use when creating desktop SaaS/web app promotional screenshot gener
 This skill is **desktop web app only**.
 
 - Use browser-window mockups and desktop compositions.
-- Do not use mobile/iPhone/App Store framing.
+- Do not use mobile framing.
 
 ## Goal
 
@@ -122,7 +122,7 @@ Use only desktop/web terminology in labels, texts, helpers, and docs:
 - “desktop screenshots”
 - “browser window mockup”
 
-Avoid mobile/App Store/iPhone naming.
+Avoid mobile-oriented naming.
 
 ## 8) QA
 
