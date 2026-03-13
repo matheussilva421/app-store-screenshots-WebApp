@@ -1,194 +1,181 @@
-### NOTE: MAKE SURE TO USE 6.1 INCH simulator to capture starting screenshots
-this will save u from adjusting the images later
+# Desktop Web App Screenshots Generator
 
-# App Store Screenshots Generator
+Gerador de screenshots promocionais para **web apps desktop (SaaS)**.
 
-A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that generates production-ready marketing screenshots for iOS apps and desktop web apps. It scaffolds a Next.js project, designs advertisement-style screenshots, and exports them at required presets while preserving the same export workflow.
-#### Screenshots & App approved by Apple - https://apps.apple.com/us/app/bloom-coffee-shelf-recipe/id6759914524
-![Example output — Bloom coffee tracking app](example.png)
+Este projeto reúne diretrizes e automações para criar peças visuais de marketing (não apenas prints de interface), com foco em layouts de navegador desktop e exportação em PNG.
 
-## What it does
+![Exemplo de saída promocional](example.png)
 
-- Asks you about your app's brand, features, and style preferences
-- Scaffolds a minimal Next.js project (or works within an existing one)
-- Designs each screenshot as an **advertisement** — not a UI showcase
-- Writes compelling copy using proven App Store copywriting patterns
-- Renders screenshots at full resolution with built-in device mockups (iPhone, optional iPad, desktop browser window)
-- Exports PNGs with the same html-to-image pipeline for mobile and desktop presets
+## 1) Descrição do projeto
 
-## Included assets
+O objetivo é facilitar a criação de screenshots promocionais para páginas de venda, landing pages, redes sociais, pitch decks e materiais comerciais de produtos SaaS/web.
 
-- `mockup.png` — Pre-measured iPhone frame with transparent screen area
+A proposta é:
 
-## Install
+- manter composição visual focada em desktop
+- reutilizar capturas reais da aplicação
+- exportar imagens finais em tamanhos desktop padronizados
 
-### Using npx skills (recommended)
+---
+
+## 2) O que ele gera
+
+O fluxo gera (ou orienta a gerar):
+
+- slides promocionais com estética de anúncio
+- composições com mockup de janela de navegador
+- PNGs finais para diferentes resoluções desktop
+
+Também oferece **captura automática opcional** via Playwright para obter screenshots direto de uma URL antes da composição.
+
+---
+
+## 3) Casos de uso
+
+- lançamento de funcionalidades (feature highlights)
+- banners e hero sections para landing pages
+- materiais comerciais para times de Sales/CS
+- criativos para anúncios de produto
+- apresentações para investidores/parceiros
+- documentação visual de roadmap/releases
+
+---
+
+## 4) Tecnologias utilizadas
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- React
+- html-to-image (exportação PNG)
+- Playwright (opcional para captura automática)
+
+---
+
+## 5) Como instalar
+
+### Requisitos
+
+- Node.js 18+
+- npm, pnpm, yarn ou bun
+
+### Dependências (projeto alvo)
 
 ```bash
-npx skills add ParthJadhav/app-store-screenshots
+npm install
 ```
 
-This works with Claude Code, Cursor, Windsurf, OpenCode, Codex, and [40+ other agents](https://github.com/vercel-labs/skills#available-agents).
-
-Install globally (available across all projects):
+### Dependência opcional para captura automática
 
 ```bash
-npx skills add ParthJadhav/app-store-screenshots -g
+npm i -D playwright
+npx playwright install chromium
 ```
 
-Install for a specific agent:
+---
+
+## 6) Como rodar localmente
 
 ```bash
-npx skills add ParthJadhav/app-store-screenshots -a claude-code
+npm run dev
 ```
 
-### Manual (git clone)
+Depois abra a URL exibida no terminal (normalmente `http://localhost:3000`).
+
+---
+
+## 7) Como gerar screenshots
+
+Existem dois fluxos:
+
+### A) Fluxo manual (continua suportado)
+
+1. Coloque screenshots da aplicação em `public/screenshots-desktop/`
+2. Monte os layouts promocionais no gerador
+3. Exporte os PNGs finais
+
+### B) Fluxo opcional com captura automática (Playwright)
+
+1. Rode a captura informando URL, viewport e tema
+2. Salve o arquivo em `public/screenshots-desktop/auto/`
+3. Reutilize o PNG capturado na composição visual existente
+
+Exemplo:
 
 ```bash
-git clone https://github.com/ParthJadhav/app-store-screenshots ~/.claude/skills/app-store-screenshots
+node scripts/capture-webapp-screenshot.mjs \
+  --url https://seu-app.com \
+  --viewport 1920x1080 \
+  --theme dark \
+  --output public/screenshots-desktop/auto/home-dark.png
 ```
 
-## Usage
+Parâmetros disponíveis:
 
-Once installed, the skill triggers automatically when you ask Claude Code to:
+- `--url` (obrigatório)
+- `--viewport` (`WxH`, ex: `1600x900`, `1920x1080`, `1440x1024`)
+- `--theme` (`light` ou `dark`)
+- `--output` (path do PNG de saída)
+- `--wait-ms` (espera extra para conteúdo dinâmico)
+- `--full-page` (captura página inteira)
 
-- Build App Store screenshots
-- Generate marketing screenshots for an iOS app
-- Generate desktop web app marketing screenshots
-- Create exportable screenshot assets
+---
 
-Or just tell Claude Code what you need:
+## 8) Presets disponíveis
 
-```
-> Build App Store screenshots for my app
-```
-
-Claude will ask you about your app's screenshots, brand colors, font, features, style direction, and number of slides before building anything.
-
-## Example prompts
-
-These are good starting prompts because they provide product context while still leaving room for the skill to guide the design process.
-
-### Habit tracker
-
-```text
-Build App Store screenshots for my habit tracker.
-The app helps people stay consistent with simple daily routines.
-I want 6 slides, clean/minimal style, warm neutrals, and a calm premium feel.
-```
-
-### Finance app
-
-```text
-Generate App Store screenshots for my personal finance app.
-The app's main strengths are fast expense capture, clear monthly trends, and shared budgets.
-I want a sharp, modern style with high contrast and 7 slides.
-```
-
-### AI productivity tool
-
-```text
-Create exportable App Store screenshots for my AI note-taking app.
-The core value is turning messy voice notes into clean summaries and action items.
-I want bold copy, dark backgrounds, and a polished tech-forward look.
-```
-
-### Wellness app
-
-```text
-Build marketing screenshots for my meditation app.
-The app focuses on sleep, stress relief, and short guided sessions.
-Use a soft, warm, organic style and prioritize emotional outcomes over feature lists.
-```
-
-### Desktop web app
-
-```text
-Create marketing screenshots for my desktop SaaS web app.
-Use browser-window mockups, keep the same narrative arc as mobile slides, and export in 1920x1080, 1600x900, and 1440x1024.
-```
-
-## Better prompt tips
-
-- say what the app does in one sentence
-- list the top 3-5 features in priority order
-- describe the visual style you want
-- mention how many slides you need
-- provide references if you want the output to match a certain App Store style
-
-## What gets scaffolded
-
-If starting from an empty folder, the skill creates:
-
-```
-project/
-├── public/
-│   ├── mockup.png          # iPhone frame (copied from skill)
-│   ├── app-icon.png        # Your app icon
-│   ├── screenshots/        # Your mobile app screenshots
-│   └── screenshots-desktop/ # Your desktop web screenshots (optional)
-├── src/app/
-│   ├── layout.tsx          # Font setup
-│   └── page.tsx            # Screenshot generator (single file)
-├── package.json
-└── ...
-```
-
-The entire generator is a **single `page.tsx` file**. Run the dev server, open the browser, click any screenshot to export it as a PNG.
-
-## Export sizes
-
-### Mobile (iPhone)
-
-| Display | Resolution |
-|---------|-----------|
-| 6.9" | 1320 x 2868 |
-| 6.5" | 1284 x 2778 |
-| 6.3" | 1206 x 2622 |
-| 6.1" | 1125 x 2436 |
-
-### Desktop (web app)
-
-| Preset | Resolution |
-|---------|-----------|
+| Preset | Resolução |
+|--------|-----------|
 | Desktop HD | 1600 x 900 |
 | Desktop FHD | 1920 x 1080 |
 | Desktop 5:4 | 1440 x 1024 |
 
-Design at the largest target per device and scale down for the other presets during export.
+---
 
-## Tech stack
+## 9) Estrutura básica do projeto
 
-| Dependency | Purpose |
-|-----------|---------|
-| Next.js | Dev server + static image serving |
-| TypeScript | Type safety |
-| Tailwind CSS | Styling |
-| html-to-image | PNG export at exact resolutions |
-| React | Component composition |
+```text
+project/
+├── public/
+│   ├── app-icon.png
+│   └── screenshots-desktop/
+│       ├── home.png
+│       ├── dashboard.png
+│       ├── table.png
+│       ├── analytics.png
+│       └── auto/                     # capturas automáticas opcionais
+├── scripts/
+│   └── capture-webapp-screenshot.mjs # captura Playwright opcional
+├── src/app/
+│   ├── layout.tsx
+│   └── page.tsx
+└── package.json
+```
 
-## Key design principles
+> Observação: este repositório atual contém principalmente documentação, skill e script de captura.
 
-- **Screenshots are ads, not docs** — each slide sells one idea
-- **Copy follows the "one second" rule** — readable at thumbnail size in the App Store
-- **Layouts vary** — no two adjacent slides share the same phone placement
-- **Style is user-driven** — no hardcoded colors, gradients, or fonts
+---
 
-## Quality Checklist
+## 10) Limitações atuais
 
-Before exporting, each slide should pass this quick review:
+- páginas com login/MFA podem exigir automação adicional
+- tema claro/escuro depende da app respeitar `prefers-color-scheme`
+- páginas com polling/lazy loading podem precisar ajuste de `--wait-ms`
+- alguns sites podem bloquear automação headless
+- a qualidade final depende da qualidade dos screenshots de entrada e da composição visual
 
-- the headline communicates one idea in about one second
-- the first slide sells the strongest user benefit
-- adjacent slides do not reuse the same layout
-- decorative elements support the message instead of blocking the UI
-- text, screenshots, and framing still look correct after export sizing
+---
 
-## Requirements
+## 11) Próximos passos sugeridos
 
-- Node.js 18+
-- One of: bun, pnpm, yarn, or npm (detected automatically, bun preferred)
+- adicionar exemplos prontos de layouts (dashboard/table/analytics)
+- incluir presets extras para canais específicos (ads/social/hero banners)
+- criar pipeline de exportação em lote com nomenclatura padronizada
+- adicionar validação visual automática (ex.: cortes, contraste, overflow)
+- suportar captura autenticada (cookies/storage state) no script
+- publicar templates de copy por tipo de produto SaaS
 
-## License
+---
+
+## Licença
 
 MIT
