@@ -54,6 +54,7 @@ Once installed, the skill triggers automatically when you ask Claude Code to:
 
 - Build App Store screenshots
 - Generate marketing screenshots for an iOS app
+- Generate desktop web app marketing screenshots
 - Create exportable screenshot assets
 
 Or just tell Claude Code what you need:
@@ -100,6 +101,13 @@ The app focuses on sleep, stress relief, and short guided sessions.
 Use a soft, warm, organic style and prioritize emotional outcomes over feature lists.
 ```
 
+### Desktop web app
+
+```text
+Create marketing screenshots for my desktop SaaS web app.
+Use browser-window mockups, keep the same narrative arc as mobile slides, and export in 1920x1080, 1600x900, and 1440x1024.
+```
+
 ## Better prompt tips
 
 - say what the app does in one sentence
@@ -117,7 +125,8 @@ project/
 ├── public/
 │   ├── mockup.png          # iPhone frame (copied from skill)
 │   ├── app-icon.png        # Your app icon
-│   └── screenshots/        # Your app screenshots
+│   ├── screenshots/        # Your mobile app screenshots
+│   └── screenshots-desktop/ # Your desktop web screenshots (optional)
 ├── src/app/
 │   ├── layout.tsx          # Font setup
 │   └── page.tsx            # Screenshot generator (single file)

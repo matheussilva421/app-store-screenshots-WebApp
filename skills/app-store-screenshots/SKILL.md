@@ -30,9 +30,10 @@ Before writing ANY code, ask the user all of these. Do not proceed until you hav
 ### Optional
 
 8. **iPad screenshots** — "Do you also have iPad screenshots? If so, we'll generate iPad App Store screenshots too (recommended for universal apps)."
-9. **Component assets** — "Do you have any UI element PNGs (cards, widgets, etc.) you want as floating decorations? If not, that's fine — we'll skip them."
-10. **Localized screenshots** — "Do you want screenshots in multiple languages? This helps your listing rank in regional App Stores even if your app is English-only. If yes: which languages? (e.g. en, de, es, pt, ja)"
-11. **Additional instructions** — "Any specific requirements, constraints, or preferences?"
+9. **Desktop screenshots** — "Do you have desktop web app screenshots (browser captures)? If yes, we can also generate desktop marketing assets."
+10. **Component assets** — "Do you have any UI element PNGs (cards, widgets, etc.) you want as floating decorations? If not, that's fine — we'll skip them."
+11. **Localized screenshots** — "Do you want screenshots in multiple languages? This helps your listing rank in regional App Stores even if your app is English-only. If yes: which languages? (e.g. en, de, es, pt, ja)"
+12. **Additional instructions** — "Any specific requirements, constraints, or preferences?"
 
 ### Derived from answers (do NOT ask — decide yourself)
 
@@ -91,7 +92,11 @@ project/
 │   │   ├── home.png
 │   │   ├── feature-1.png
 │   │   └── ...
-│   └── screenshots-ipad/       # iPad app screenshots (optional)
+│   ├── screenshots-ipad/       # iPad app screenshots (optional)
+│   │   ├── home.png
+│   │   ├── feature-1.png
+│   │   └── ...
+│   └── screenshots-desktop/    # desktop web app screenshots (optional)
 │       ├── home.png
 │       ├── feature-1.png
 │       └── ...
@@ -275,7 +280,7 @@ page.tsx
 └── ScreenshotsPage (grid + device toggle + size dropdown + export logic)
 ```
 
-### Export Sizes (Apple Required, portrait)
+### Export Sizes (device presets)
 
 #### iPhone
 
@@ -320,6 +325,34 @@ const DESKTOP_SIZES = [
 ```
 
 Design desktop slides at the largest common preset for web marketing (`1920x1080`) and scale to the other desktop targets during export.
+
+### Minimal Refactor Plan (non-destructive)
+
+Keep the current page architecture and export flow. Add desktop support by extending existing unions/registries instead of replacing anything:
+
+```ts
+type Device = "iphone" | "ipad" | "desktop";
+
+const SIZE_MAP = {
+  iphone: IPHONE_SIZES,
+  ipad: IPAD_SIZES,
+  desktop: DESKTOP_SIZES,
+} as const;
+
+const SCREENSHOT_MAP = {
+  iphone: IPHONE_SCREENSHOTS,
+  ipad: IPAD_SCREENSHOTS,
+  desktop: DESKTOP_SCREENSHOTS,
+} as const;
+
+const BASE_CANVAS = {
+  iphone: { w: 1320, h: 2868 },
+  ipad: { w: 2064, h: 2752 },
+  desktop: { w: 1920, h: 1080 },
+} as const;
+```
+
+Use the selected `device` to drive slide registry + size dropdown. Export logic stays exactly the same (`toPng` warmup call + final call, offscreen node, resize to target preset).
 
 ### Rendering Strategy
 
@@ -543,6 +576,7 @@ el.style.zIndex = "";
 - 300ms delay between sequential exports.
 - Set `fontFamily` on the offscreen container.
 - **Numbered filenames**: Prefix exports with zero-padded index so they sort correctly: `01-hero-1320x2868.png`, `02-freshness-1320x2868.png`, etc. Use `String(index + 1).padStart(2, "0")`.
+- **Device-specific filenames** (recommended): include device prefix for mixed batches, e.g. `desktop-01-hero-1920x1080.png`.
 
 ## Step 7: Final QA Gate
 
