@@ -1,57 +1,26 @@
-# Web App Screenshots Generator
+# Desktop Web App Screenshots Generator
 
-A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that generates production-ready promotional screenshots for desktop SaaS/web apps. It scaffolds a Next.js project, designs marketing-style screenshots, and exports PNGs at desktop presets.
+Toolkit/skill para agentes de código gerarem **screenshots promocionais de web apps desktop (SaaS)** com Next.js + TypeScript + Tailwind, exportando PNG com `html-to-image`.
 
-![Example output — Bloom coffee tracking app](example.png)
+![Exemplo de saída promocional](example.png)
 
-## What it does
+## Escopo (desktop only)
 
-- Asks you about your product brand, features, and visual direction
-- Scaffolds a minimal Next.js project (or works inside an existing one)
-- Designs each screenshot as an **advertisement** (not a UI dump)
-- Generates desktop-focused compositions for common SaaS UI types:
-  - dashboards
-  - tables/data grids
-  - analytics/graphs
-  - sidebar + topbar + cards layouts
-- Uses desktop browser-window mockups (instead of iPhone/device frames)
-- Exports PNGs with a reusable `html-to-image` workflow
+Este projeto é **exclusivamente desktop web apps**.
 
-## Install
+- ✅ Foco: dashboards, tabelas, analytics, layouts com sidebar/topbar/cards
+- ✅ Mockup principal: janela de navegador desktop
+- ✅ Exportação PNG em presets desktop
+- ❌ Sem fluxo/App Store/iPhone/mobile
 
-### Using npx skills (recommended)
+## O que ele faz
 
-```bash
-npx skills add ParthJadhav/app-store-screenshots
-```
+- Coleta briefing de branding, estilo e prioridades de features
+- Gera slides promocionais (cada slide vende uma ideia)
+- Usa componentes reutilizáveis para layouts desktop
+- Exporta screenshots em PNG mantendo o pipeline com `html-to-image`
 
-Install globally:
-
-```bash
-npx skills add ParthJadhav/app-store-screenshots -g
-```
-
-Install for a specific agent:
-
-```bash
-npx skills add ParthJadhav/app-store-screenshots -a claude-code
-```
-
-## Usage
-
-Trigger with prompts like:
-
-```text
-Build web app screenshots for my SaaS dashboard
-```
-
-or
-
-```text
-Create desktop marketing screenshots for my web app and export in 1920x1080, 1600x900, and 1440x1024
-```
-
-## Scaffolded structure
+## Estrutura esperada
 
 ```text
 project/
@@ -59,6 +28,8 @@ project/
 │   ├── app-icon.png
 │   └── screenshots-desktop/
 │       ├── home.png
+│       ├── dashboard.png
+│       ├── table.png
 │       ├── analytics.png
 │       └── ...
 ├── src/app/
@@ -67,17 +38,24 @@ project/
 └── package.json
 ```
 
-The generator remains a single `page.tsx` file. Open the dev server, review slides, and click to export PNG assets.
+## Presets desktop de exportação
 
-## Desktop export presets
-
-| Preset | Resolution |
-|--------|------------|
+| Preset | Resolução |
+|--------|-----------|
 | Desktop HD | 1600 x 900 |
 | Desktop FHD | 1920 x 1080 |
 | Desktop 5:4 | 1440 x 1024 |
 
-## Tech stack
+## Execução local
+
+```bash
+npm install
+npm run dev
+```
+
+> Também funciona com `bun`, `pnpm` ou `yarn`.
+
+## Stack
 
 - Next.js
 - TypeScript
@@ -85,11 +63,6 @@ The generator remains a single `page.tsx` file. Open the dev server, review slid
 - html-to-image
 - React
 
-## Requirements
-
-- Node.js 18+
-- bun, pnpm, yarn, or npm
-
-## License
+## Licença
 
 MIT
