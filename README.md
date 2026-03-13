@@ -3,7 +3,7 @@ this will save u from adjusting the images later
 
 # App Store Screenshots Generator
 
-A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that generates production-ready App Store screenshots for iOS apps. It scaffolds a Next.js project, designs advertisement-style screenshots, and exports them at all required Apple resolutions.
+A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that generates production-ready marketing screenshots for iOS apps and desktop web apps. It scaffolds a Next.js project, designs advertisement-style screenshots, and exports them at required presets while preserving the same export workflow.
 #### Screenshots & App approved by Apple - https://apps.apple.com/us/app/bloom-coffee-shelf-recipe/id6759914524
 ![Example output — Bloom coffee tracking app](example.png)
 
@@ -13,8 +13,8 @@ A skill for AI-powered coding agents (Claude Code, Cursor, Windsurf, etc.) that 
 - Scaffolds a minimal Next.js project (or works within an existing one)
 - Designs each screenshot as an **advertisement** — not a UI showcase
 - Writes compelling copy using proven App Store copywriting patterns
-- Renders screenshots at full resolution with a built-in iPhone mockup
-- Exports PNGs at all 4 Apple-required sizes (6.9", 6.5", 6.3", 6.1")
+- Renders screenshots at full resolution with built-in device mockups (iPhone, optional iPad, desktop browser window)
+- Exports PNGs with the same html-to-image pipeline for mobile and desktop presets
 
 ## Included assets
 
@@ -129,6 +129,8 @@ The entire generator is a **single `page.tsx` file**. Run the dev server, open t
 
 ## Export sizes
 
+### Mobile (iPhone)
+
 | Display | Resolution |
 |---------|-----------|
 | 6.9" | 1320 x 2868 |
@@ -136,7 +138,15 @@ The entire generator is a **single `page.tsx` file**. Run the dev server, open t
 | 6.3" | 1206 x 2622 |
 | 6.1" | 1125 x 2436 |
 
-Screenshots are designed at 1320x2868 (largest) and scaled down for smaller sizes.
+### Desktop (web app)
+
+| Preset | Resolution |
+|---------|-----------|
+| Desktop HD | 1600 x 900 |
+| Desktop FHD | 1920 x 1080 |
+| Desktop 5:4 | 1440 x 1024 |
+
+Design at the largest target per device and scale down for the other presets during export.
 
 ## Tech stack
 
